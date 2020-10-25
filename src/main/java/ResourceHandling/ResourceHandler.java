@@ -32,6 +32,7 @@ public class ResourceHandler<T> {
             }
         } else {
             int batchSize = data.length / wantedNumberOfBatches;
+
             while (startIndex < data.length) {
                 int endIndex = Math.min(startIndex + batchSize, data.length);
                 if (startIndex + 2 * batchSize > data.length)
@@ -42,7 +43,7 @@ public class ResourceHandler<T> {
         }
     }
 
-    public int getNumberOfCreatedBatches() {
+    public int getRemainingBatches() {
         return batches.size();
     }
 

@@ -6,51 +6,57 @@ import ResourceHandling.RandomIntegerArrayGenerator;
 import ResourceHandling.ResourceHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TaskSetupSimpler {
 
-    public static void setupSequentialTask(Integer[] data){
+    public static void setupSequentialTask(Integer[] data) {
         System.out.println("Starting Sequential task with data size - " + data.length);
         int sum = 0;
         for (int i = 0; i < data.length; i++) {
-            data[i] = data[i]*data[i];
+            data[i] = data[i] * data[i];
             sum += data[i];
         }
         System.out.println("Finished Sequential Task with sum " + sum);
         System.out.println();
     }
 
-    public static void setupSimpleConcurrentTask(Integer[] data){
+    public static void setupSimpleConcurrentTask(Integer[] data) {
         System.out.println("Starting concurrent processing of Data -- Data Size is: " + data.length);
 
         ResourceHandler<Integer> handler =
                 new ResourceHandler<>(data, Runtime.getRuntime().availableProcessors(), 1024);
         List<Thread> threads = new ArrayList<>();
-        List<BatchProcessorPipeline<Integer>> pipes = new ArrayList<>();
+        List<SimpleRunnable> runnables = new ArrayList<>();
 
-        for (int i = 0; i < handler.getNumberOfCreatedBatches(); i++) {
-            Thread current = new Thread(new SimpleRunnable(handler.getBatch()));
+        while(handler.getRemainingBatches()>0) {
+            SimpleRunnable tmp = new SimpleRunnable(handler.getBatch());
+            runnables.add(tmp);
+
+            Thread current = new Thread(tmp);
             current.start();
             threads.add(current);
         }
 
-        for (Thread thread: threads){
+        for (Thread thread : threads) {
             try {
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-//        BatchPipelineAggregator<Integer> summer =
-//                new BatchPipelineAggregator<Integer>(pipes, new AggregateTaskFromFunction<>(Integer::sum));
-//        System.out.println("Sum is: " + summer.aggregate());
+        long sum = 0;
+        for (SimpleRunnable runnable : runnables) {
+            sum+= runnable.sum;
+        }
+        System.out.println("Sum is: " + sum);
     }
 
     public static void main(String[] args) {
-        Integer[] data = RandomIntegerArrayGenerator.generateUniformIntegers(1024*1024*100, 1, 5);
-        Integer[] dataCpy = data.clone();
+        Integer[] data = RandomIntegerArrayGenerator.generateUniformIntegers(1024 * 1024 * 100, 1, 5);
+        Integer[] dataCpy = Arrays.copyOf(data, data.length);
 
         long elapsedSequentialTime;
         long elapsedConcurrentTime;
@@ -61,14 +67,14 @@ public class TaskSetupSimpler {
 
         currentTime = System.nanoTime();
         setupSimpleConcurrentTask(dataCpy);
-        elapsedConcurrentTime = System.nanoTime()-currentTime;
+        elapsedConcurrentTime = System.nanoTime() - currentTime;
 
         System.out.println();
         System.out.println("Results are as follows: ");
         System.out.println("Sequential Method took - " +
-                (double) elapsedSequentialTime/1000000000.0 + " seconds");
+                (double) elapsedSequentialTime / 1000000000.0 + " seconds");
 
         System.out.println("Concurrent Method took - " +
-                (double) elapsedConcurrentTime/1000000000.0 + " seconds");
+                (double) elapsedConcurrentTime / 1000000000.0 + " seconds");
     }
 }

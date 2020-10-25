@@ -27,12 +27,11 @@ public class ComplexTaskSetup {
         List<Thread> threads = new ArrayList<>();
         List<BatchProcessorPipeline<Integer>> pipes = new ArrayList<>();
 
-        for (int i = 0; i < handler.getNumberOfCreatedBatches(); i++) {
+        while(handler.getRemainingBatches()>0) {
             BatchProcessorPipeline<Integer> pipeline = new BatchProcessorPipeline<>(handler.getBatch());
             pipes.add(pipeline);
             pipeline.addTask(PipelineTaskFromFunction.power2);
-//            pipeline.addTask(new PipelineTaskFromFunction<>(integer -> integer*integer));
-//            pipeline.setAggregateTask(AggregateTaskFromFunction.summer);
+//            pipeline.setAggregateTask(AggregateTaskFromFunction.summer); //Adds massive overhead :(
             Thread current = new Thread(pipeline);
 
             current.start();
@@ -46,6 +45,7 @@ public class ComplexTaskSetup {
                 e.printStackTrace();
             }
         }
+//        Adds too much overhead
 //        BatchPipelineAggregator<Integer> summer =
 //                new BatchPipelineAggregator<Integer>(pipes, new AggregateTaskFromFunction<>(Integer::sum));
 //        System.out.println("Sum is: " + summer.aggregate());

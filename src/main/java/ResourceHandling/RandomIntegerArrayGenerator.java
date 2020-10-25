@@ -9,7 +9,7 @@ public class RandomIntegerArrayGenerator {
         Random random = new Random();
 
         for (int i = 0; i < size; i++) {
-            data[i] = random.nextInt(high+low)+low;
+            data[i] = random.nextInt(high+low)-low+1;
         }
         return data;
     }
