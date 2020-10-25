@@ -36,7 +36,7 @@ public class BatchProcessorPipeline<T> implements Runnable{
             throw new OperationNotSupportedException("This ConcurrentTaskPipeline.BatchProcessorPipeline does not have a set aggregate task");
     }
 
-    BatchProcessorPipeline(ResourceBatch<T> data){
+    public BatchProcessorPipeline(ResourceBatch<T> data){
         this.data = data;
     }
 

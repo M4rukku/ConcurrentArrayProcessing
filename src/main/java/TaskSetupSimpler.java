@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class TaskSetup {
+public class TaskSetupSimpler {
 
     public static void setupSequentialTask(Integer[] data){
         System.out.println("Starting Sequential task with data size - " + data.length);
@@ -22,7 +22,7 @@ public class TaskSetup {
         System.out.println();
     }
 
-    public static void setupConcurrentTask(Integer[] data){
+    public static void setupSimpleConcurrentTask(Integer[] data){
         System.out.println("Starting concurrent processing of Data -- Data Size is: " + data.length);
 
         ResourceHandler<Integer> handler =
@@ -31,12 +31,7 @@ public class TaskSetup {
         List<BatchProcessorPipeline<Integer>> pipes = new ArrayList<>();
 
         for (int i = 0; i < handler.getNumberOfCreatedBatches(); i++) {
-            BatchProcessorPipeline<Integer> pipeline = new BatchProcessorPipeline<>(handler.getBatch());
-            pipes.add(pipeline);
-            pipeline.addTask(new PipelineTaskFromFunction<>(integer -> integer*integer));
-            pipeline.setAggregateTask(new AggregateTaskFromFunction<>(Integer::sum));
-            Thread current = new Thread(pipeline);
-
+            Thread current = new Thread(new SimpleRunnable(handler.getBatch()));
             current.start();
             threads.add(current);
         }
@@ -65,7 +60,7 @@ public class TaskSetup {
         elapsedSequentialTime = System.nanoTime() - currentTime;
 
         currentTime = System.nanoTime();
-        setupConcurrentTask(dataCpy);
+        setupSimpleConcurrentTask(dataCpy);
         elapsedConcurrentTime = System.nanoTime()-currentTime;
 
         System.out.println();
