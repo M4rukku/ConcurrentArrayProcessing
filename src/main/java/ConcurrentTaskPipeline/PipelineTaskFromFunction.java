@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PipelineTaskFromFunction<T> implements PipelineTask<T>{
+    public static PipelineTaskFromFunction<Integer> power2 = new PipelineTaskFromFunction<>(integer -> integer*integer);
+
     public Function<T, T> function;
 
     public PipelineTaskFromFunction(Function<T, T> function) {

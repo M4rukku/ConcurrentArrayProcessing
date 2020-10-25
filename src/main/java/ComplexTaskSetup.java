@@ -1,7 +1,4 @@
-import ConcurrentTaskPipeline.AggregateTaskFromFunction;
-import ConcurrentTaskPipeline.BatchPipelineAggregator;
-import ConcurrentTaskPipeline.BatchProcessorPipeline;
-import ConcurrentTaskPipeline.PipelineTaskFromFunction;
+import ConcurrentTaskPipeline.*;
 import ResourceHandling.RandomIntegerArrayGenerator;
 import ResourceHandling.ResourceHandler;
 
@@ -9,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class TaskSetup {
+public class ComplexTaskSetup {
 
     public static void setupSequentialTask(Integer[] data){
         System.out.println("Starting Sequential task with data size - " + data.length);
@@ -33,8 +30,9 @@ public class TaskSetup {
         for (int i = 0; i < handler.getNumberOfCreatedBatches(); i++) {
             BatchProcessorPipeline<Integer> pipeline = new BatchProcessorPipeline<>(handler.getBatch());
             pipes.add(pipeline);
-            pipeline.addTask(new PipelineTaskFromFunction<>(integer -> integer*integer));
-            pipeline.setAggregateTask(new AggregateTaskFromFunction<>(Integer::sum));
+            pipeline.addTask(PipelineTaskFromFunction.power2);
+//            pipeline.addTask(new PipelineTaskFromFunction<>(integer -> integer*integer));
+//            pipeline.setAggregateTask(AggregateTaskFromFunction.summer);
             Thread current = new Thread(pipeline);
 
             current.start();

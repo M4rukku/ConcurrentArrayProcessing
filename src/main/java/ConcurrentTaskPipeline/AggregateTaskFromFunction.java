@@ -5,6 +5,8 @@ import ResourceHandling.ResourceBatch;
 import java.util.function.BiFunction;
 
 public class AggregateTaskFromFunction<T> implements AggregateTask<T>{
+    public static AggregateTaskFromFunction<Integer> summer = new AggregateTaskFromFunction<>(Integer::sum);
+
     public  BiFunction<T, T, T> aggregator;
 
     @Override
