@@ -1,3 +1,8 @@
+package ConcurrentTaskPipeline;
+
+import ConcurrentTaskPipeline.AggregateTask;
+import ResourceHandling.ResourceBatch;
+
 import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,7 @@ public class BatchProcessorPipeline<T> implements Runnable{
         if (doesAggregation && processingComplete)
             return aggregateValue;
         else
-            throw new OperationNotSupportedException("This BatchProcessorPipeline does not have a set aggregate task");
+            throw new OperationNotSupportedException("This ConcurrentTaskPipeline.BatchProcessorPipeline does not have a set aggregate task");
     }
 
     BatchProcessorPipeline(ResourceBatch<T> data){

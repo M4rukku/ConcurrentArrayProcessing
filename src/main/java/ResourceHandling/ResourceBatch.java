@@ -1,8 +1,13 @@
+package ResourceHandling;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class ResourceBatch<T> {
-    private final T[] data;
-    int startBatchIndex;
+    public final T[] data;
+    public int startBatchIndex;
     //End Index is exclusive
-    int endBatchIndex;
+    public int endBatchIndex;
 
     ResourceBatch(T[] data, int startBatchIndex, int endBatchIndex){
         this.data = data;
