@@ -41,7 +41,10 @@ public class BatchProcessorPipeline<T> implements Runnable{
     }
 
     public void run() {
-        //TODO
+        for (PipelineTask<T> task : tasks){
+            task.process(data);
+        }
+        aggregateValue = aggregateTask.combine(data);
         processingComplete = true;
     }
 }
